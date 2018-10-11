@@ -39,14 +39,18 @@ class LibnameConan(ConanFile):
                 if self.settings.arch == "x86" and tools.detected_architecture() == "x86_64":
                     installer.install("gcc-multilib")
                     installer.install("libglu1-mesa-dev:i386")
+                    installer.install("libxi-dev:i386")
                 else:
                     installer.install("libglu1-mesa-dev")
+                    installer.install("libxi-dev")
             elif tools.os_info.with_yum:
                 installer = tools.SystemPackageTool()
                 if self.settings.arch == "x86" and tools.detected_architecture() == "x86_64":
                     installer.install("libGLU-devel.i686")
+                    installer.install("libXi-devel.i686")
                 else:
                     installer.install("libGLU-devel")
+                    installer.install("libXi-devel")
             else:
                 self.output.warn("Could not determine Linux package manager, skipping system requirements installation.")
 
