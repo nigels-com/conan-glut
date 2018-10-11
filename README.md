@@ -1,8 +1,8 @@
 ## Package Status
 
-| Bintray | Windows | Linux & macOS |
+| Bintray | Windows | Linux |
 |:--------:|:---------:|:-----------------:|
-|BINTRAY_BADGE_URL|APPVEYOR_BADGE_URL|[![Build Status](https://travis-ci.org/nigels-com/conan-glut.svg?branch=testing%2F3.0.0)](https://travis-ci.org/nigels-com/conan-glut)|
+|BINTRAY_BADGE_URL|[![Build status](https://ci.appveyor.com/api/projects/status/8xeq7qmjuh59f776/branch/testing/3.0.0?svg=true)](https://ci.appveyor.com/project/nigels-com/conan-glut/branch/testing/3.0.0)|[![Build Status](https://travis-ci.org/nigels-com/conan-glut.svg?branch=testing%2F3.0.0)](https://travis-ci.org/nigels-com/conan-glut)|
 
 ## Conan.io Information
 
