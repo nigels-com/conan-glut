@@ -90,13 +90,15 @@ class LibnameConan(ConanFile):
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Windows":
-            self.cpp_info.defines = ["FREEGLUT_LIB_PRAGMAS=0"]
+            if not self.options.shared:
+                self.cpp_info.defines.append("FREEGLUT_STATIC=1")
+            self.cpp_info.defines.append("FREEGLUT_LIB_PRAGMAS=0")
             self.cpp_info.libs.append("glu32")
             self.cpp_info.libs.append("opengl32")
             self.cpp_info.libs.append("gdi32")
             self.cpp_info.libs.append("winmm")
             self.cpp_info.libs.append("user32")
-            if not self.options.shared:
-                self.cpp_info.libs[0] += "_static"
-            if self.settings.build_type == "Debug":
-                self.cpp_info.libs[0] += "d"
+#            if not self.options.shared:
+#                self.cpp_info.libs[0] += "_static"
+#            if self.settings.build_type == "Debug":
+#                self.cpp_info.libs[0] += "d"
