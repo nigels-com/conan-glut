@@ -23,8 +23,8 @@ class LibnameConan(ConanFile):
 
     # Options may need to change depending on the packaged library.
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = "shared=False", "fPIC=True"
+    options = {"shared": [True, False], "fPIC": [True, False], "install_pdb": [True, False]}
+    default_options = "shared=False", "fPIC=True", "install_pdb=False"
 
     # Custom attributes for Bincrafters recipe conventions
     source_subfolder = "source_subfolder"
@@ -57,6 +57,8 @@ class LibnameConan(ConanFile):
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
+        if self.settings.compiler != "Visual Studio":
+            self.options.install_pdb = False
 
     def source(self):
         zip_name = "freeglut-%s" % (self.version)
@@ -75,6 +77,8 @@ class LibnameConan(ConanFile):
         else:
             cmake.definitions["FREEGLUT_BUILD_SHARED_LIBS"] = False
             cmake.definitions["FREEGLUT_BUILD_STATIC_LIBS"] = True
+        if self.options.install_pdb:
+            cmake.definitions["FREEGLUT_INSTALL_PDB"] = True
         cmake.configure(build_folder=self.build_subfolder)
         return cmake
 
