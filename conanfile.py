@@ -47,8 +47,6 @@ class LibnameConan(ConanFile):
                 installer = tools.SystemPackageTool()
                 if self.settings.arch == "x86" and tools.detected_architecture() == "x86_64":
                     installer.install("libGL-devel.i686")
-                    installer.install("glibmm24.i686")
-                    installer.install("glibc-devel.i686")
                 else:
                     installer.install("libGL-devel")
             else:
