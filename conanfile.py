@@ -96,5 +96,7 @@ class LibnameConan(ConanFile):
             self.cpp_info.libs.append("gdi32")
             self.cpp_info.libs.append("winmm")
             self.cpp_info.libs.append("user32")
+            if not self.options.shared:
+                self.cpp_info.libs[0] += "_static"
             if self.settings.build_type == "Debug":
                 self.cpp_info.libs[0] += "d"
