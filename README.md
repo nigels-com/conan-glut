@@ -2,7 +2,7 @@
 
 | Bintray | Windows | Linux & macOS |
 |:--------:|:---------:|:-----------------:|
-|BINTRAY_BADGE_URL|APPVEYOR_BADGE_URL|TRAVIS_BADGE_URL|
+|BINTRAY_BADGE_URL|APPVEYOR_BADGE_URL|[![Build Status](https://travis-ci.org/nigels-com/conan-glut.svg?branch=testing%2F3.0.0)](https://travis-ci.org/nigels-com/conan-glut)|
 
 ## Conan.io Information
 
