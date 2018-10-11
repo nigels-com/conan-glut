@@ -6,17 +6,16 @@ import os
 
 
 class LibnameConan(ConanFile):
-    name = "libname"
-    version = "0.0.0"
-    description = "Keep it short"
-    url = "https://github.com/bincrafters/conan-libname"
-    homepage = "https://github.com/original_author/original_lib"
-    author = "Bincrafters <bincrafters@gmail.com>"
-    # Indicates License type of the packaged library
-    license = "MIT"
+    name = "glut"
+    version = "3.0.0"
+    description = "FreeGLUT is a free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library."
+    homepage = "https://github.com/dcnieho/FreeGLUT"
+    url = "http://freeglut.sourceforge.net/"
+    author = "John F. Fay, John Tsiombikas and Diederick C. Niehorster"
+    license = "X-Consortium"
 
     # Packages the license for the conanfile.py
-    exports = ["LICENSE.md"]
+    exports = ["freeglut/freeglut/COPYING"]
 
     # Remove following lines if the target lib does not use cmake.
     exports_sources = ["CMakeLists.txt"]
@@ -31,26 +30,51 @@ class LibnameConan(ConanFile):
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
-    requires = (
-        "OpenSSL/1.0.2p@conan/stable",
-        "zlib/1.2.11@conan/stable"
-    )
+    requires = ()
+
+    def system_requirements(self):
+        if tools.os_info.is_linux:
+            if tools.os_info.with_apt:
+                installer = tools.SystemPackageTool()
+                if self.settings.arch == "x86" and tools.detected_architecture() == "x86_64":
+                    installer.install("gcc-multilib")
+                    installer.install("libgl1-mesa-dev:i386")
+                    installer.install("libgl1-mesa-glx:i386")
+                else:
+                    installer.install("libgl1-mesa-dev")
+                    installer.install("libgl1-mesa-glx")
+            elif tools.os_info.with_yum:
+                installer = tools.SystemPackageTool()
+                if self.settings.arch == "x86" and tools.detected_architecture() == "x86_64":
+                    installer.install("libGL-devel.i686")
+                    installer.install("glibmm24.i686")
+                    installer.install("glibc-devel.i686")
+                else:
+                    installer.install("libGL-devel")
+            else:
+                self.output.warn("Could not determine Linux package manager, skipping system requirements installation.")
 
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
 
     def source(self):
-        source_url = "https://github.com/libauthor/libname"
-        tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
-        extracted_dir = self.name + "-" + self.version
-
-        # Rename to "source_subfolder" is a convention to simplify later steps
-        os.rename(extracted_dir, self.source_subfolder)
+        zip_name = "freeglut-%s" % (self.version)
+        zip_ext = ".tar.gz"
+        tools.download("https://sourceforge.net/projects/freeglut/files/freeglut/%s/%s.tar.gz/download" % (self.version, zip_name), zip_name + zip_ext)
+        tools.unzip(zip_name + zip_ext)
+        os.unlink(zip_name + zip_ext)
+        os.rename(zip_name, self.source_subfolder)
 
     def configure_cmake(self):
         cmake = CMake(self)
-        cmake.definitions["BUILD_TESTS"] = False # example
+        cmake.definitions["FREEGLUT_BUILD_DEMOS"] = False
+        if self.options.shared:
+            cmake.definitions["FREEGLUT_BUILD_SHARED_LIBS"] = True
+            cmake.definitions["FREEGLUT_BUILD_STATIC_LIBS"] = False
+        else:
+            cmake.definitions["FREEGLUT_BUILD_SHARED_LIBS"] = False
+            cmake.definitions["FREEGLUT_BUILD_STATIC_LIBS"] = True
         cmake.configure(build_folder=self.build_subfolder)
         return cmake
 
@@ -62,15 +86,6 @@ class LibnameConan(ConanFile):
         self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
         cmake = self.configure_cmake()
         cmake.install()
-        # If the CMakeLists.txt has a proper install method, the steps below may be redundant
-        # If so, you can just remove the lines below
-        include_folder = os.path.join(self.source_subfolder, "include")
-        self.copy(pattern="*", dst="include", src=include_folder)
-        self.copy(pattern="*.dll", dst="bin", keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", keep_path=False)
-        self.copy(pattern="*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", keep_path=False)
-        self.copy(pattern="*.dylib", dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
