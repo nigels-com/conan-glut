@@ -27,8 +27,8 @@ class LibnameConan(ConanFile):
     default_options = "shared=False", "fPIC=True", "install_pdb=False"
 
     # Custom attributes for Bincrafters recipe conventions
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    source_subfolder = "source"
+    build_subfolder = "build"
 
     requires = ()
 
@@ -78,7 +78,9 @@ class LibnameConan(ConanFile):
             cmake.definitions["FREEGLUT_BUILD_SHARED_LIBS"] = False
             cmake.definitions["FREEGLUT_BUILD_STATIC_LIBS"] = True
         if self.options.install_pdb:
-            cmake.definitions["FREEGLUT_INSTALL_PDB"] = True
+            cmake.definitions["INSTALL_PDB"] = True
+        else:
+            cmake.definitions["INSTALL_PDB"] = False
         cmake.configure(build_folder=self.build_subfolder)
         return cmake
 
