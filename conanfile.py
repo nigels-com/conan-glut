@@ -18,7 +18,7 @@ class LibnameConan(ConanFile):
     exports = ["freeglut/freeglut/COPYING"]
 
     # Remove following lines if the target lib does not use cmake.
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ["CMakeLists.txt", "FindGLUT.cmake"]
     generators = "cmake"
 
     # Options may need to change depending on the packaged library.
@@ -90,6 +90,7 @@ class LibnameConan(ConanFile):
 
     def package(self):
         self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
+        self.copy("FindGLUT.cmake")
         cmake = self.configure_cmake()
         cmake.install()
 
@@ -104,7 +105,12 @@ class LibnameConan(ConanFile):
             self.cpp_info.libs.append("gdi32")
             self.cpp_info.libs.append("winmm")
             self.cpp_info.libs.append("user32")
-#            if not self.options.shared:
-#                self.cpp_info.libs[0] += "_static"
-#            if self.settings.build_type == "Debug":
-#                self.cpp_info.libs[0] += "d"
+        if self.settings.os == "Linux":
+            if not self.options.shared:
+                self.cpp_info.libs.append("GLU")
+                self.cpp_info.libs.append("GL")
+                self.cpp_info.libs.append("Xi")
+#               self.cpp_info.libs.append("Xrandr")
+                self.cpp_info.libs.append("Xext")
+                self.cpp_info.libs.append("Xxf86vm")
+                self.cpp_info.libs.append("X11")
