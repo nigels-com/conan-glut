@@ -6,8 +6,12 @@
 
 int main(int argc, char * argv[])
 {
+#if WIN32
+    if (1)
+#else
     /* Need X11 display to init GLUT */
     if (getenv("DISPLAY")!=NULL)
+#endif
     {
         glutInit(&argc, argv);
         printf("Bincrafters FreeGLUT %d\n", glutGet(GLUT_VERSION));
