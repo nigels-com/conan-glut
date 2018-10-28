@@ -85,32 +85,35 @@ class LibnameConan(ConanFile):
         return cmake
 
     def build(self):
-        cmake = self.configure_cmake()
-        cmake.build()
+        if self.settings.os != 'Macos':
+            cmake = self.configure_cmake()
+            cmake.build()
 
     def package(self):
         self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
         self.copy("FindGLUT.cmake")
-        cmake = self.configure_cmake()
-        cmake.install()
+        if self.settings.os != 'Macos':
+            cmake = self.configure_cmake()
+            cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
-        if self.settings.os == "Windows":
-            if not self.options.shared:
-                self.cpp_info.defines.append("FREEGLUT_STATIC=1")
-            self.cpp_info.defines.append("FREEGLUT_LIB_PRAGMAS=0")
-            self.cpp_info.libs.append("glu32")
-            self.cpp_info.libs.append("opengl32")
-            self.cpp_info.libs.append("gdi32")
-            self.cpp_info.libs.append("winmm")
-            self.cpp_info.libs.append("user32")
-        if self.settings.os == "Linux":
-            if not self.options.shared:
-                self.cpp_info.libs.append("GLU")
-                self.cpp_info.libs.append("GL")
-                self.cpp_info.libs.append("Xi")
-#               self.cpp_info.libs.append("Xrandr")
-                self.cpp_info.libs.append("Xext")
-                self.cpp_info.libs.append("Xxf86vm")
-                self.cpp_info.libs.append("X11")
+        if self.settings.os != 'Macos':
+            self.cpp_info.libs = tools.collect_libs(self)
+            if self.settings.os == "Windows":
+                if not self.options.shared:
+                    self.cpp_info.defines.append("FREEGLUT_STATIC=1")
+                self.cpp_info.defines.append("FREEGLUT_LIB_PRAGMAS=0")
+                self.cpp_info.libs.append("glu32")
+                self.cpp_info.libs.append("opengl32")
+                self.cpp_info.libs.append("gdi32")
+                self.cpp_info.libs.append("winmm")
+                self.cpp_info.libs.append("user32")
+            if self.settings.os == "Linux":
+                if not self.options.shared:
+                    self.cpp_info.libs.append("GLU")
+                    self.cpp_info.libs.append("GL")
+                    self.cpp_info.libs.append("Xi")
+    #               self.cpp_info.libs.append("Xrandr")
+                    self.cpp_info.libs.append("Xext")
+                    self.cpp_info.libs.append("Xxf86vm")
+                    self.cpp_info.libs.append("X11")
